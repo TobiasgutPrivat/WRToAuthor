@@ -34,6 +34,7 @@ string accountId = wr.GetProperty("accountId").GetString();
 int score = wr.GetProperty("score").GetInt32();
 
 map.AuthorLogin = accountId;
+map.AuthorNickname = "Test";
 map.AuthorTime = new TmEssentials.TimeInt32(score);
 map.AuthorScore = score;
 gbx.Save(path + "modified.map.Gbx");

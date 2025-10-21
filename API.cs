@@ -1,9 +1,7 @@
-using System.Text;
-using Newtonsoft.Json;
-using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
+using Newtonsoft.Json;
 
 class API
 {
@@ -42,7 +40,7 @@ class API
 
     public static async Task<JsonElement?> getWR(string mapUid)
     {
-        string url = $"https://live-services.trackmania.nadeo.live/api/token/leaderboard/group/{{ \"Personal_Best\" }}/map/{mapUid}/top?length={1}&onlyWorld={true}";
+        string url = $"https://live-services.trackmania.nadeo.live/api/token/leaderboard/group/{"Personal_Best"}/map/{mapUid}/top?length={1}&onlyWorld={true}";
         string access_token = API.getAccessToken();
         using HttpClient client = new();
         client.DefaultRequestHeaders.Accept.Clear();
