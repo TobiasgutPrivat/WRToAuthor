@@ -6,12 +6,17 @@ using TmEssentials;
 
 class WRtoAuthor
 {
-    public static async void setWRAuthor(string path, string email, string password)
+    private NadeoLiveServices nls;
+    private NadeoServices ns;
+    public WRtoAuthor(string email, string password)
     {
-        using var nls = new NadeoLiveServices();
+        nls = new NadeoLiveServices();
         nls.AuthorizeAsync(email, password, AuthorizationMethod.UbisoftAccount).GetAwaiter().GetResult();
-        using var ns = new NadeoServices();
+        ns = new NadeoServices();
         ns.AuthorizeAsync(email, password, AuthorizationMethod.UbisoftAccount).GetAwaiter().GetResult();
+    }
+    public async void setWRAuthor(string path)
+    {
 
         Gbx<CGameCtnChallenge> gbx = Gbx.Parse<CGameCtnChallenge>(path);
         CGameCtnChallenge map = gbx.Node;
@@ -21,6 +26,11 @@ class WRtoAuthor
         Guid mapId = mapInfo.MapId;
 
         TopLeaderboardCollection leaderboard = nls.GetTopLeaderboardAsync(mapUid, 1).GetAwaiter().GetResult();
+        if (leaderboard.Tops.Count == 0 || leaderboard.Tops.First().Top.Count == 0)
+        {
+            Console.WriteLine($"{path} has no WR data, skipping...");
+            return;
+        }
         Record wr = leaderboard.Tops.First().Top.First();
         map.AuthorLogin = Convert.ToBase64String(wr.AccountId.ToByteArray());
         map.AuthorTime = wr.Score;

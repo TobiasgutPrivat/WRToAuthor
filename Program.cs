@@ -4,7 +4,7 @@ using GBX.NET.LZO;
 Gbx.LZO = new MiniLZO();
 // Gbx.ZLib = new ZLib();
 
-string? path = null; // set to null for command line .exe
+string? path = "C:/Users/Tobias/Documents/Trackmania2020/Maps/AutoAlt/Altered Nadeo/Fall 2025/Fall 2025 Fragile"; // set to null for command line .exe
 if (path == null)
 {
     if (args.Length > 0)
@@ -30,17 +30,17 @@ Console.WriteLine("Enter email: ");
 string email = Console.ReadLine() ?? "";
 Console.WriteLine("Enter password: ");
 string password = Console.ReadLine() ?? "";
-
+WRtoAuthor wRtoAuthor = new WRtoAuthor(email, password);
 if (Directory.Exists(path))
 {
     foreach (string file in Directory.EnumerateFiles(path, "*.Map.Gbx"))
     {
-        WRtoAuthor.setWRAuthor(file, email, password);
+        wRtoAuthor.setWRAuthor(file);
     }
 }
 else if (File.Exists(path))
 {
-    WRtoAuthor.setWRAuthor(path, email, password);
+    wRtoAuthor.setWRAuthor(path);
 }
 else
 {

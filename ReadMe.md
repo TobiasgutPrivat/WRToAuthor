@@ -11,3 +11,7 @@ This will overwrite your mapfiles and directly reupload to Nadeo Services
 3. Follow the instructions (you will need to enter your ubisoft login)
 
 For more flexibility you can pull the Repo and modify/build it yourself
+
+## publishing
+
+dotnet publish -c Release -r win-x64 --self-contained false /p:PublishSingleFile=true /p:PublishTrimmed=false /p:EnableCompressionInSingleFile=true -o .\publish
