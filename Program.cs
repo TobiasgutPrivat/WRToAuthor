@@ -4,7 +4,7 @@ using GBX.NET.LZO;
 Gbx.LZO = new MiniLZO();
 // Gbx.ZLib = new ZLib();
 
-string? path = "C:/Users/Tobias/Documents/Trackmania2020/Maps/AutoAlt/Altered Nadeo/Fall 2025/Fall 2025 Fragile"; // set to null for command line .exe
+string? path = null; // set to null for command line .exe
 if (path == null)
 {
     if (args.Length > 0)
