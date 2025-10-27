@@ -4,7 +4,7 @@ using GBX.NET.LZO;
 Gbx.LZO = new MiniLZO();
 // Gbx.ZLib = new ZLib();
 
-string? path = null; // set to null for command line .exe
+string? path = "C:/Users/Tobias/Documents/Trackmania2020/Maps/AutoAlt/Altered TMNF/TMNF NoBrake"; // set to null for command line .exe
 if (path == null)
 {
     if (args.Length > 0)
@@ -47,6 +47,8 @@ else
     Console.WriteLine("File or folder not found: " + path);
     Environment.Exit(1);
 }
-
+#if !DEBUG
+Environment.Exit(0);
+#endif
 Console.WriteLine("Done...");
 Console.ReadLine();
