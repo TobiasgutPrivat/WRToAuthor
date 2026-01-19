@@ -12,6 +12,16 @@ This will overwrite your mapfiles and directly reupload to Nadeo Services
 
 For more flexibility you can pull the Repo and modify/build it yourself
 
+## map process
+probably best to:
+
+1. create/generate map
+2. calc lightmaps
+3. upload via club campaign
+4. let validate
+5. WRtoWuthor
+5. upload via club campaign
+
 ## publishing
 
 dotnet publish -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true /p:PublishTrimmed=false /p:EnableCompressionInSingleFile=true -o .\publish

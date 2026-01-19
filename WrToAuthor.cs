@@ -1,8 +1,6 @@
-using System.Runtime.CompilerServices;
 using GBX.NET;
 using GBX.NET.Engines.Game;
 using ManiaAPI.NadeoAPI;
-using ManiaAPI.NadeoAPI.Extensions.Gbx;
 using TmEssentials;
 
 class WRtoAuthor
@@ -16,11 +14,13 @@ class WRtoAuthor
         ns = new NadeoServices();
         ns.AuthorizeAsync(email, password, AuthorizationMethod.UbisoftAccount).GetAwaiter().GetResult();
     }
-    public void setWRAuthor(string mapPath, string? AuthorLogin = null)
+    public void setWRAuthor(string mapPath, string? AuthorLogin = null, bool skipIfValidated = true)
     {
         //Load map
         Gbx<CGameCtnChallenge> gbx = Gbx.Parse<CGameCtnChallenge>(mapPath);
         CGameCtnChallenge map = gbx.Node;
+        TimeInt32 maxTime = new TimeInt32(999999999); //estimate
+        if (skipIfValidated && map.AuthorTime != null && map.AuthorTime < maxTime ) return; //already validated
         string mapUid = map.MapInfo.Id;
 
         //Get map info
@@ -31,12 +31,16 @@ class WRtoAuthor
         TopLeaderboardCollection leaderboard = nls.GetTopLeaderboardAsync(mapUid, 1).GetAwaiter().GetResult();
         if (leaderboard.Tops.Count == 0 || leaderboard.Tops.First().Top.Count == 0)
         {
-            Console.WriteLine($"{mapPath} has no WR data");
+            map.MapName += " (Unvalidated)";
+            Console.WriteLine($"{mapPath} set to Unvalidated");
+            gbx.Save(mapPath += " (Unvalidated)");
         } else {
-            Record wr = leaderboard.Tops.First().Top.First();
+            List<Record> wrs = leaderboard.Tops.First().Top.ToList();
             
             //Download Replay
-            MapRecord wrRec = ns.GetMapRecordsAsync([wr.AccountId], mapId).GetAwaiter().GetResult().First();
+            Record wr = wrs.First();
+            var records = ns.GetMapRecordsAsync([wr.AccountId], mapId).GetAwaiter().GetResult();
+            MapRecord wrRec = records.First();
             string downloadURL = wrRec.Url;
             using var httpClient = new HttpClient();
             using var response = httpClient.GetAsync(downloadURL).GetAwaiter().GetResult();
@@ -56,7 +60,10 @@ class WRtoAuthor
             if (AuthorLogin != null)
             {
                 map.AuthorLogin = AuthorLogin;
-                map.MapName += $" (ft. {replay.GhostNickname})";
+                if (AuthorLogin != replay.GhostLogin)
+                {
+                    map.MapName += $" (ft. {replay.GhostNickname})";
+                }
             } else
             {
                 map.AuthorLogin = replay.GhostLogin;
@@ -66,16 +73,16 @@ class WRtoAuthor
             map.SilverTime = new TimeInt32((int)Math.Floor(wr.Score.TotalMilliseconds * 0.0012 + 1) * 1000);
             map.BronzeTime = new TimeInt32((int)Math.Floor(wr.Score.TotalMilliseconds * 0.0015 + 1) * 1000);
             map.AuthorScore = wr.Score.TotalMilliseconds;
-            gbx.Save(mapPath);
-            Console.WriteLine($"{mapPath} Author set to {wr.AccountId} {wr.Score}");
             
             //Cleanup
             File.Delete(replayPath);
+            Console.WriteLine($"{mapPath} Author set to {wr.AccountId} {wr.Score}");
+            gbx.Save(mapPath);
         }
 
-        using var mapfs = File.OpenRead(mapPath);
-        ns.UpdateMapAsync(mapId, mapfs, Path.GetFileName(mapfs.Name)).GetAwaiter().GetResult();
-        Console.WriteLine($"{mapPath} uploaded to Nadeo Servers");
+        // using var mapfs = File.OpenRead(mapPath);
+        // ns.UpdateMapAsync(mapId, mapfs, Path.GetFileName(mapfs.Name)).GetAwaiter().GetResult();
+        // Console.WriteLine($"{mapPath} uploaded to Nadeo Servers");
     }
     
 }

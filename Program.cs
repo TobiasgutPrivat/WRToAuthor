@@ -4,7 +4,9 @@ using GBX.NET.LZO;
 Gbx.LZO = new MiniLZO();
 // Gbx.ZLib = new ZLib();
 
-string? path = "C:/Users/Tobias/Documents/Trackmania2020/Maps/AutoAlt/Altered TMNF/TMNF NoBrake"; // set to null for command line .exe
+string? path = @"C:\Users\Tobias\Documents\Trackmania2020\Maps\Altered Nadeo Submissions\TMNF\freewheel"; // set to null for command line .exe
+string? login = "qfHOi30uQlySPIRmhdUeVw"; //Tobias2g
+
 if (path == null)
 {
     if (args.Length > 0)
@@ -35,12 +37,12 @@ if (Directory.Exists(path))
 {
     foreach (string file in Directory.EnumerateFiles(path, "*.Map.Gbx"))
     {
-        wRtoAuthor.setWRAuthor(file);
+        wRtoAuthor.setWRAuthor(file,login);
     }
 }
 else if (File.Exists(path))
 {
-    wRtoAuthor.setWRAuthor(path);
+    wRtoAuthor.setWRAuthor(path,login);
 }
 else
 {
