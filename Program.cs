@@ -4,7 +4,7 @@ using GBX.NET.LZO;
 Gbx.LZO = new MiniLZO();
 // Gbx.ZLib = new ZLib();
 
-string? path = @"C:\Users\Tobias\Documents\Trackmania2020\Maps\Altered Nadeo Submissions\TMNF\freewheel"; // set to null for command line .exe
+string? path = @"C:\Users\Tobias\Documents\Trackmania2020\Maps\AutoAlt\Altered TMNF\TMNF Desert"; // set to null for command line .exe
 string? login = "qfHOi30uQlySPIRmhdUeVw"; //Tobias2g
 
 if (path == null)

@@ -1,6 +1,8 @@
+using System.Net;
 using GBX.NET;
 using GBX.NET.Engines.Game;
 using ManiaAPI.NadeoAPI;
+using ManiaAPI.NadeoAPI.Extensions.Gbx;
 using TmEssentials;
 
 class WRtoAuthor
@@ -14,12 +16,12 @@ class WRtoAuthor
         ns = new NadeoServices();
         ns.AuthorizeAsync(email, password, AuthorizationMethod.UbisoftAccount).GetAwaiter().GetResult();
     }
-    public void setWRAuthor(string mapPath, string? AuthorLogin = null, bool skipIfValidated = true)
+    public void setWRAuthor(string mapPath, string? AuthorLogin = null, bool skipIfValidated = true, bool upload = true, bool markUnvalidated = false)
     {
         //Load map
         Gbx<CGameCtnChallenge> gbx = Gbx.Parse<CGameCtnChallenge>(mapPath);
         CGameCtnChallenge map = gbx.Node;
-        TimeInt32 maxTime = new TimeInt32(999999999); //estimate
+        TimeInt32 maxTime = new TimeInt32(1000000000); //estimate
         if (skipIfValidated && map.AuthorTime != null && map.AuthorTime < maxTime ) return; //already validated
         string mapUid = map.MapInfo.Id;
 
@@ -31,8 +33,14 @@ class WRtoAuthor
         TopLeaderboardCollection leaderboard = nls.GetTopLeaderboardAsync(mapUid, 1).GetAwaiter().GetResult();
         if (leaderboard.Tops.Count == 0 || leaderboard.Tops.First().Top.Count == 0)
         {
+            Console.WriteLine($"{mapPath} has no WR");
+            if (!markUnvalidated) return;
+            Console.WriteLine($"{mapPath} marked as unvalidated");
             map.MapName += " (Unvalidated)";
-            Console.WriteLine($"{mapPath} set to Unvalidated");
+            map.AuthorTime = maxTime;
+            map.GoldTime = maxTime;
+            map.SilverTime = maxTime;
+            map.BronzeTime = maxTime;
             gbx.Save(mapPath += " (Unvalidated)");
         } else {
             List<Record> wrs = leaderboard.Tops.First().Top.ToList();
@@ -80,9 +88,10 @@ class WRtoAuthor
             gbx.Save(mapPath);
         }
 
-        // using var mapfs = File.OpenRead(mapPath);
-        // ns.UpdateMapAsync(mapId, mapfs, Path.GetFileName(mapfs.Name)).GetAwaiter().GetResult();
-        // Console.WriteLine($"{mapPath} uploaded to Nadeo Servers");
+        if (!upload) return;
+        using var mapfs = File.OpenRead(mapPath);
+        ns.UpdateMapAsync(mapId, mapfs, Path.GetFileName(mapfs.Name)).GetAwaiter().GetResult();
+        Console.WriteLine($"{mapPath} uploaded to Nadeo Servers");
     }
     
 }
