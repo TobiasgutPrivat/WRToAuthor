@@ -1,4 +1,3 @@
-using System.Net;
 using GBX.NET;
 using GBX.NET.Engines.Game;
 using ManiaAPI.NadeoAPI;
@@ -16,7 +15,7 @@ class WRtoAuthor
         ns = new NadeoServices();
         ns.AuthorizeAsync(email, password, AuthorizationMethod.UbisoftAccount).GetAwaiter().GetResult();
     }
-    public void setWRAuthor(string mapPath, string? AuthorLogin = null, bool skipIfValidated = true, bool upload = true, bool markUnvalidated = false)
+    public void setWRAuthor(string mapPath, string? AuthorLogin = null, Guid? prefferedAccount = null, bool skipIfValidated = true, bool upload = true, bool markUnvalidated = false)
     {
         //Load map
         Gbx<CGameCtnChallenge> gbx = Gbx.Parse<CGameCtnChallenge>(mapPath);
@@ -44,9 +43,16 @@ class WRtoAuthor
             gbx.Save(mapPath += " (Unvalidated)");
         } else {
             List<Record> wrs = leaderboard.Tops.First().Top.ToList();
+            Record? wr = null;
+            if (prefferedAccount != null) { 
+                //prefer specified author
+                wr = wrs.FirstOrDefault(r => r.AccountId == prefferedAccount);   
+            }
+            if (wr == null){
+                wr = wrs.First();
+            }
             
             //Download Replay
-            Record wr = wrs.First();
             var records = ns.GetMapRecordsAsync([wr.AccountId], mapId).GetAwaiter().GetResult();
             MapRecord wrRec = records.First();
             string downloadURL = wrRec.Url;

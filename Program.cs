@@ -6,6 +6,7 @@ Gbx.LZO = new MiniLZO();
 
 string? path = @"C:\Users\Tobias\Documents\Trackmania2020\Maps\AutoAlt\Altered TMNF\TMNF Desert"; // set to null for command line .exe
 string? login = "qfHOi30uQlySPIRmhdUeVw"; //Tobias2g
+Guid? accountId = new Guid("a9f1ce8b-7d2e-425c-923c-846685d51e57"); //Tobias2g
 
 if (path == null)
 {
@@ -37,12 +38,12 @@ if (Directory.Exists(path))
 {
     foreach (string file in Directory.EnumerateFiles(path, "*.Map.Gbx"))
     {
-        wRtoAuthor.setWRAuthor(file,login);
+        wRtoAuthor.setWRAuthor(file,login,accountId);
     }
 }
 else if (File.Exists(path))
 {
-    wRtoAuthor.setWRAuthor(path,login);
+    wRtoAuthor.setWRAuthor(path,login,accountId);
 }
 else
 {
@@ -52,5 +53,8 @@ else
 #if !DEBUG
 Environment.Exit(0);
 #endif
-Console.WriteLine("Done...");
-Console.ReadLine();
+if (args.Length > 0) { //command line mode
+    Console.WriteLine("Done...");
+    Console.ReadLine();
+    Environment.Exit(0);
+}
