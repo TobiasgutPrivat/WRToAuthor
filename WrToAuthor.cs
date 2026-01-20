@@ -8,6 +8,7 @@ class WRtoAuthor
 {
     private NadeoLiveServices nls;
     private NadeoServices ns;
+    private String unvalidatedMark = " (Unvalidated)";
     public WRtoAuthor(string email, string password)
     {
         nls = new NadeoLiveServices();
@@ -91,7 +92,8 @@ class WRtoAuthor
             //Cleanup
             File.Delete(replayPath);
             Console.WriteLine($"{mapPath} Author set to {wr.AccountId} {wr.Score}");
-            gbx.Save(mapPath);
+            map.MapName = map.MapName.Replace(unvalidatedMark, "");
+            gbx.Save(mapPath.Replace(unvalidatedMark, ""));
         }
 
         if (!upload) return;
