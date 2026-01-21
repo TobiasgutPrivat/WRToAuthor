@@ -8,7 +8,7 @@ class WRtoAuthor
 {
     private NadeoLiveServices nls;
     private NadeoServices ns;
-    private String unvalidatedMark = " (Unvalidated)";
+    private string unvalidatedMark = " (Unvalidated)";
     public WRtoAuthor(string email, string password)
     {
         nls = new NadeoLiveServices();
@@ -16,12 +16,12 @@ class WRtoAuthor
         ns = new NadeoServices();
         ns.AuthorizeAsync(email, password, AuthorizationMethod.UbisoftAccount).GetAwaiter().GetResult();
     }
-    public void setWRAuthor(string mapPath, string? AuthorLogin = null, Guid? prefferedAccount = null, bool skipIfValidated = true, bool upload = true, bool markUnvalidated = false)
+    public void setWRAuthor(string mapPath, string? AuthorLogin = null, Guid? prefferedAccount = null, bool skipIfValidated = true, bool upload = true, bool markUnvalidated = true)
     {
         //Load map
         Gbx<CGameCtnChallenge> gbx = Gbx.Parse<CGameCtnChallenge>(mapPath);
         CGameCtnChallenge map = gbx.Node;
-        TimeInt32 maxTime = new TimeInt32(1000000000); //estimate
+        TimeInt32 maxTime = TimeInt32.MaxValue;
         if (skipIfValidated && map.AuthorTime != null && map.AuthorTime < maxTime ) return; //already validated
         string mapUid = map.MapInfo.Id;
 
@@ -36,12 +36,13 @@ class WRtoAuthor
             Console.WriteLine($"{mapPath} has no WR");
             if (!markUnvalidated) return;
             Console.WriteLine($"{mapPath} marked as unvalidated");
-            map.MapName += " (Unvalidated)";
+            if (AuthorLogin != null) map.AuthorLogin = AuthorLogin;
+            if (!map.MapName.Contains(unvalidatedMark)) map.MapName += unvalidatedMark;
             map.AuthorTime = maxTime;
             map.GoldTime = maxTime;
             map.SilverTime = maxTime;
             map.BronzeTime = maxTime;
-            gbx.Save(mapPath += " (Unvalidated)");
+            gbx.Save(mapPath);
         } else {
             List<Record> wrs = leaderboard.Tops.First().Top.ToList();
             Record? wr = null;
@@ -93,7 +94,7 @@ class WRtoAuthor
             File.Delete(replayPath);
             Console.WriteLine($"{mapPath} Author set to {wr.AccountId} {wr.Score}");
             map.MapName = map.MapName.Replace(unvalidatedMark, "");
-            gbx.Save(mapPath.Replace(unvalidatedMark, ""));
+            gbx.Save(mapPath);
         }
 
         if (!upload) return;
