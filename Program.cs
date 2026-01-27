@@ -4,7 +4,7 @@ using GBX.NET.LZO;
 Gbx.LZO = new MiniLZO();
 // Gbx.ZLib = new ZLib();
 
-string? path = @"C:\Users\Tobias\Documents\Trackmania2020\Maps\AutoAlt\Altered TMNF\TMNF Rally"; // set to null for command line .exe
+string? path = @"C:\Users\Tobias\Documents\Trackmania2020\Maps\Altered Process\TMNF\TMNF Snow"; // set to null for command line .exe
 string? login = "qfHOi30uQlySPIRmhdUeVw"; //Tobias2g
 Guid? accountId = new Guid("a9f1ce8b-7d2e-425c-923c-846685d51e57"); //Tobias2g
 

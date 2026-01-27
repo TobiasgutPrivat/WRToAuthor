@@ -22,7 +22,7 @@ class WRtoAuthor
         Gbx<CGameCtnChallenge> gbx = Gbx.Parse<CGameCtnChallenge>(mapPath);
         CGameCtnChallenge map = gbx.Node;
         TimeInt32 maxTime = TimeInt32.MaxValue;
-        if (skipIfValidated && map.AuthorTime != null && map.AuthorTime < maxTime ) return; //already validated
+        if (skipIfValidated && map.AuthorTime != null && map.AuthorTime < maxTime/10 ) return; //already validated
         string mapUid = map.MapInfo.Id;
 
         //Get map info
@@ -35,6 +35,7 @@ class WRtoAuthor
         {
             Console.WriteLine($"{mapPath} has no WR");
             if (!markUnvalidated) return;
+            if (map.MapName.Contains(unvalidatedMark)) return;
             Console.WriteLine($"{mapPath} marked as unvalidated");
             if (AuthorLogin != null) map.AuthorLogin = AuthorLogin;
             if (!map.MapName.Contains(unvalidatedMark)) map.MapName += unvalidatedMark;
