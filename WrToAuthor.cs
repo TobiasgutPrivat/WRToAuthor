@@ -9,12 +9,12 @@ class WRtoAuthor
     private NadeoLiveServices nls;
     private NadeoServices ns;
     private string unvalidatedMark = " (Unvalidated)";
-    public WRtoAuthor(string email, string password)
+    public WRtoAuthor(string login, string password)
     {
         nls = new NadeoLiveServices();
-        nls.AuthorizeAsync(email, password, AuthorizationMethod.UbisoftAccount).GetAwaiter().GetResult();
+        nls.AuthorizeAsync(login, password, AuthorizationMethod.DedicatedServer).GetAwaiter().GetResult();
         ns = new NadeoServices();
-        ns.AuthorizeAsync(email, password, AuthorizationMethod.UbisoftAccount).GetAwaiter().GetResult();
+        ns.AuthorizeAsync(login, password, AuthorizationMethod.DedicatedServer).GetAwaiter().GetResult();
     }
     public void setWRAuthor(string mapPath, string? AuthorLogin = null, Guid? prefferedAccount = null, bool skipIfValidated = true, bool upload = true, bool markUnvalidated = true)
     {
@@ -30,7 +30,7 @@ class WRtoAuthor
         Guid mapId = mapInfo.MapId;
 
         //Get WR
-        TopLeaderboardCollection leaderboard = nls.GetTopLeaderboardAsync(mapUid, 1).GetAwaiter().GetResult();
+        TopLeaderboardCollection leaderboard = nls.GetTopLeaderboardAsync(mapUid, 10).GetAwaiter().GetResult(); //get top 10 to prefer specified author
         if (leaderboard.Tops.Count == 0 || leaderboard.Tops.First().Top.Count == 0)
         {
             Console.WriteLine($"{mapPath} has no WR");
@@ -85,6 +85,7 @@ class WRtoAuthor
             {
                 map.AuthorLogin = replay.GhostLogin;
             }
+            if (map.AuthorTime <= wr.Score) return; //authortime already better than WR
             map.AuthorTime = wr.Score;
             map.GoldTime = new TimeInt32((int)Math.Floor(wr.Score.TotalMilliseconds * 0.00106 + 1) * 1000);
             map.SilverTime = new TimeInt32((int)Math.Floor(wr.Score.TotalMilliseconds * 0.0012 + 1) * 1000);

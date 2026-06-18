@@ -4,7 +4,7 @@ using GBX.NET.LZO;
 Gbx.LZO = new MiniLZO();
 // Gbx.ZLib = new ZLib();
 
-string? path = @"C:\Users\Tobias\Documents\Trackmania2020\Maps\Altered Process\TMNF\TMNF Snow"; // set to null for command line .exe
+string? path = @"C:\Users\Tobias\Documents\Trackmania2020\Maps\Altered Process\Winter 2026\Winter 2026 WRTrace"; // set to null for command line .exe
 string? login = "qfHOi30uQlySPIRmhdUeVw"; //Tobias2g
 Guid? accountId = new Guid("a9f1ce8b-7d2e-425c-923c-846685d51e57"); //Tobias2g
 
@@ -29,11 +29,9 @@ if (path == null)
 }
 
 
-Console.WriteLine("Enter email: ");
-string email = Console.ReadLine() ?? "";
-Console.WriteLine("Enter password: ");
-string password = Console.ReadLine() ?? "";
-WRtoAuthor wRtoAuthor = new WRtoAuthor(email, password);
+string name = "service_AutoAlteration";
+string password = "";
+WRtoAuthor wRtoAuthor = new WRtoAuthor(name, password);
 if (Directory.Exists(path))
 {
     foreach (string file in Directory.EnumerateFiles(path, "*.Map.Gbx"))
